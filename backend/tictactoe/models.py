@@ -3,8 +3,8 @@ from django.db import models
 # Create your models here.
 
 class Board(models.Model):
-    user1 = models.CharField(max_length=50)
-    user2 = models.CharField(max_length=50)
+    user1 = models.CharField(max_length=50, blank=True)
+    user2 = models.CharField(max_length=50, blank=True)
     winner = models.CharField(max_length=50, blank=True)
     loser = models.CharField(max_length=50, blank=True)
     istied = models.BooleanField(null=True, blank=True)

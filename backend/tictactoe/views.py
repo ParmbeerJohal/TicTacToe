@@ -14,12 +14,24 @@ def board_create(request):
         serializer = BoardSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers={'Access-Control-Allow-Origin': 'http://localhost:8000'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@ensure_csrf_cookie
+def user_create(request):
+
+    if request.method == 'POST':
+        serializer = BoardSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers={'Access-Control-Allow-Origin': 'http://localhost:8000'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Updates the board layout and sends it back to
 # the frontend
 @api_view(['GET', 'PUT'])
+@ensure_csrf_cookie
 def board_detail(request, pk):
 
     try:
@@ -29,11 +41,11 @@ def board_detail(request, pk):
 
     if request.method == 'GET':
         serializer = BoardSerializer(board)
-        return Response(serializer.data)
+        return Response(serializer.data, headers={'Access-Control-Allow-Origin': 'http://localhost:8000'})
 
     elif request.method == 'PUT':
         serializer = BoardSerializer(board, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, headers={'Access-Control-Allow-Origin': 'http://localhost:8000'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

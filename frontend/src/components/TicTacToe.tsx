@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Col, InputGroupAddon, InputGroup, Input } from 'reactstrap';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 export const TicTacToe: React.FC<any> = () => {
 
@@ -12,6 +12,7 @@ export const TicTacToe: React.FC<any> = () => {
 
     const [bool, setBool] = useState(false);
 
+    const [username, setUsername] = useState('');
     
     useEffect(() => {
         const gameString = array.join('');
@@ -38,21 +39,34 @@ export const TicTacToe: React.FC<any> = () => {
     // When username is submitted, it gets
     // stored in the backend database and a new
     // user and board is created
-    const submitUser = async (e: any) => {
-        const data = {username: e.target.value};
-        const response = await axios.post(
-            'http://localhost:8000/tictactoe/',
-            {
-                method: 'POST',
-                headers: {
+    const submitUser = async () => {
+        const data = {user1: username};
+        let response: AxiosResponse<any>;
+        const config = {
+            'Content-Type': 'application/json'
+          };
+          try {
+            response = await axios.post(
+                'http://localhost:8000/tictactoe/',
+                {
+                    method: 'POST',
+                    headers: {
                     'Content-Type': 'application/json',
-                },
-                data
-            }
-        
-        );
-        console.log(response);
-    }
+                    },
+                    data,
+                    config
+                }
+            );
+          } catch (err) {
+              response = err.response;
+          }
+        console.log('response: ', response);
+    };
+
+    const nameChangeHandler = (val: any) => {
+        console.log('name: ', val.target.value);
+        setUsername(val.target.value);
+    };
 
     const clickHandler = (e: any) => {
         array[e.target.id] = turn;
@@ -97,9 +111,9 @@ export const TicTacToe: React.FC<any> = () => {
     </div>
     <h1>enter username:</h1>
     <InputGroup>
-        <Input placeholder="enter your username here" />
+        <Input placeholder="enter your username here" value={username} onChange={(value: any) => nameChangeHandler(value)} />
         <InputGroupAddon addonType="append">
-          <Button color="success" onClick={(e) => submitUser(e)}>Submit</Button>
+          <Button color="success" onClick={submitUser}>Submit</Button>
         </InputGroupAddon>
       </InputGroup>
     </Col>
